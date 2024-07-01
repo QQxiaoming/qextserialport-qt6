@@ -32,13 +32,12 @@
 
 #include "qextserialenumerator.h"
 #include "qextserialenumerator_p.h"
-#include <QtCore/QDebug>
-#include <QtCore/QStringList>
-#include <QtCore/QDir>
+#include <QDebug>
+#include <QStringList>
+#include <QDir>
 
 void QextSerialEnumeratorPrivate::init_sys()
 {
-#ifndef QESP_NO_UDEV
     monitor = NULL;
     notifierFd = -1;
     notifier = NULL;
@@ -46,12 +45,10 @@ void QextSerialEnumeratorPrivate::init_sys()
     udev = udev_new();
     if (!udev)
         qCritical() << "Unable to initialize udev notifications";
-#endif
 }
 
 void QextSerialEnumeratorPrivate::destroy_sys()
 {
-#ifndef QESP_NO_UDEV
     if (notifier) {
         notifier->setEnabled(false);
         delete notifier;
@@ -62,29 +59,27 @@ void QextSerialEnumeratorPrivate::destroy_sys()
 
     if (udev)
         udev_unref(udev);
-#endif
 }
 
-#ifndef QESP_NO_UDEV
 static QextPortInfo portInfoFromDevice(struct udev_device *dev)
 {
     QString vendor = QString::fromLatin1(udev_device_get_property_value(dev, "ID_VENDOR_ID"));
     QString product = QString::fromLatin1(udev_device_get_property_value(dev, "ID_MODEL_ID"));
+    QString revision = QString::fromLatin1(udev_device_get_property_value(dev, "ID_REVISION"));
 
     QextPortInfo pi;
     pi.vendorID = vendor.toInt(0, 16);
     pi.productID = product.toInt(0, 16);
+    pi.revision = revision.toInt(0, 16);
     pi.portName = QString::fromLatin1(udev_device_get_devnode(dev));
     pi.physName = pi.portName;
 
     return pi;
 }
-#endif
 
 QList<QextPortInfo> QextSerialEnumeratorPrivate::getPorts_sys()
 {
     QList<QextPortInfo> infoList;
-#ifndef QESP_NO_UDEV
     struct udev *ud = udev_new();
     if (!ud) {
         qCritical() << "Unable to enumerate ports because udev is not initialized.";
@@ -112,50 +107,6 @@ QList<QextPortInfo> QextSerialEnumeratorPrivate::getPorts_sys()
     // Done with the list and this udev
     udev_enumerate_unref(enumerate);
     udev_unref(ud);
-#else
-    QStringList portNamePrefixes, portNameList;
-    portNamePrefixes << QLatin1String("ttyS*"); // list normal serial ports first
-
-    QDir dir(QLatin1String("/dev"));
-    portNameList = dir.entryList(portNamePrefixes, (QDir::System | QDir::Files), QDir::Name);
-
-    // remove the values which are not serial ports for e.g.  /dev/ttysa
-    for (int i = 0; i < portNameList.size(); i++) {
-        bool ok;
-        QString current = portNameList.at(i);
-        // remove the ttyS part, and check, if the other part is a number
-        current.remove(0,4).toInt(&ok, 10);
-        if (!ok) {
-            portNameList.removeAt(i);
-            i--;
-        }
-    }
-
-    // get the non standard serial ports names
-    // (USB-serial, bluetooth-serial, 18F PICs, and so on)
-    // if you know an other name prefix for serial ports please let us know
-    portNamePrefixes.clear();
-    portNamePrefixes << QLatin1String("ttyACM*") << QLatin1String("ttyUSB*") << QLatin1String("rfcomm*");
-    portNameList += dir.entryList(portNamePrefixes, (QDir::System | QDir::Files), QDir::Name);
-
-    foreach (QString str , portNameList) {
-        QextPortInfo inf;
-        inf.physName = QLatin1String("/dev/")+str;
-        inf.portName = str;
-
-        if (str.contains(QLatin1String("ttyS"))) {
-            inf.friendName = QLatin1String("Serial port ")+str.remove(0, 4);
-        }
-        else if (str.contains(QLatin1String("ttyUSB"))) {
-            inf.friendName = QLatin1String("USB-serial adapter ")+str.remove(0, 6);
-        }
-        else if (str.contains(QLatin1String("rfcomm"))) {
-            inf.friendName = QLatin1String("Bluetooth-serial adapter ")+str.remove(0, 6);
-        }
-        inf.enumName = QLatin1String("/dev"); // is there a more helpful name for this?
-        infoList.append(inf);
-    }
-#endif
 
     return infoList;
 }
@@ -163,7 +114,6 @@ QList<QextPortInfo> QextSerialEnumeratorPrivate::getPorts_sys()
 bool QextSerialEnumeratorPrivate::setUpNotifications_sys(bool setup)
 {
     Q_UNUSED(setup);
-#ifndef QESP_NO_UDEV
     Q_Q(QextSerialEnumerator);
     if (!udev) {
         qCritical() << "Unable to initialize notifications because udev is not initialized.";
@@ -185,12 +135,8 @@ bool QextSerialEnumeratorPrivate::setUpNotifications_sys(bool setup)
     notifier->setEnabled(true);
 
     return true;
-#else
-    return false;
-#endif
 }
 
-#ifndef QESP_NO_UDEV
 void QextSerialEnumeratorPrivate::_q_deviceEvent()
 {
     Q_Q(QextSerialEnumerator);
@@ -207,4 +153,3 @@ void QextSerialEnumeratorPrivate::_q_deviceEvent()
         udev_device_unref(dev);
     }
 }
-#endif

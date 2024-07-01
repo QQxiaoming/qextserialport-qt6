@@ -31,12 +31,12 @@
 
 #include "qextserialport.h"
 #include "qextserialport_p.h"
-#include <QtCore/QThread>
-#include <QtCore/QReadWriteLock>
-#include <QtCore/QMutexLocker>
-#include <QtCore/QDebug>
-#include <QtCore/QRegExp>
-#include <QtCore/QMetaType>
+#include <QThread>
+#include <QReadWriteLock>
+#include <QMutexLocker>
+#include <QDebug>
+#include <QRegularExpression>
+#include <QMetaType>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #  include <QtCore/QWinEventNotifier>
 #else
@@ -65,9 +65,10 @@ void QextSerialPortPrivate::platformSpecificDestruct() {
 */
 static QString fullPortNameWin(const QString &name)
 {
-    QRegExp rx(QLatin1String("^COM(\\d+)"));
+    QRegularExpression rx(QLatin1String("^COM(\\d+)"));
     QString fullName(name);
-    if (fullName.contains(rx))
+    const auto rxMatch = rx.match(fullName);
+    if (rxMatch.hasMatch())
         fullName.prepend(QLatin1String("\\\\.\\"));
     return fullName;
 }

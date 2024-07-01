@@ -4,8 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-contains(QT_VERSION, ^5\\..*\\..*): QT += widgets
+QT       += core gui widgets
 
 TARGET = uartassistant
 TEMPLATE = app

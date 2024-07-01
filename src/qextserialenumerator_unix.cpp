@@ -31,7 +31,7 @@
 
 #include "qextserialenumerator.h"
 #include "qextserialenumerator_p.h"
-#include <QtCore/QDebug>
+#include <QDebug>
 
 void QextSerialEnumeratorPrivate::init_sys()
 {

@@ -32,7 +32,7 @@
 #ifndef _QEXTSERIALPORT_H_
 #define _QEXTSERIALPORT_H_
 
-#include <QtCore/QIODevice>
+#include <QIODevice>
 #include "qextserialport_global.h"
 #ifdef Q_OS_UNIX
 #include <termios.h>
@@ -165,7 +165,7 @@ struct PortSettings
 };
 
 class QextSerialPortPrivate;
-class QEXTSERIALPORT_EXPORT QextSerialPort: public QIODevice
+class QextSerialPort: public QIODevice
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QextSerialPort)

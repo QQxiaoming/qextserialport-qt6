@@ -44,7 +44,7 @@
 //
 
 #include "qextserialport.h"
-#include <QtCore/QReadWriteLock>
+#include <QReadWriteLock>
 #ifdef Q_OS_UNIX
 #  include <termios.h>
 #elif (defined Q_OS_WIN)

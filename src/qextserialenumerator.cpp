@@ -29,12 +29,12 @@
 **
 ****************************************************************************/
 
-#include "qextserialenumerator.h"
 #include "qextserialenumerator_p.h"
+#include "qextserialenumerator.h"
 
-#include <QtCore/QDebug>
-#include <QtCore/QMetaType>
-#include <QtCore/QRegExp>
+#include <QDebug>
+#include <QMetaType>
+#include <QRegularExpression>
 
 QextSerialEnumeratorPrivate::QextSerialEnumeratorPrivate(QextSerialEnumerator *enumrator)
     :q_ptr(enumrator)
@@ -61,6 +61,7 @@ QextSerialEnumeratorPrivate::~QextSerialEnumeratorPrivate()
   QString enumName;   ///< Enumerator name.
   int vendorID;       ///< Vendor ID.
   int productID;      ///< Product ID
+  int revision;       ///< Device revision
   \endcode
  */
 
@@ -128,7 +129,7 @@ QextSerialEnumeratorPrivate::~QextSerialEnumeratorPrivate()
 QextSerialEnumerator::QextSerialEnumerator(QObject *parent)
     :QObject(parent), d_ptr(new QextSerialEnumeratorPrivate(this))
 {
-    if (!QMetaType::isRegistered(QMetaType::type("QextPortInfo")))
+    if (!QMetaType::isRegistered(QMetaType::fromName("QextPortInfo").id()))
         qRegisterMetaType<QextPortInfo>("QextPortInfo");
 }
 

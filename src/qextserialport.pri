@@ -25,8 +25,7 @@ win32:SOURCES          += $$PWD/qextserialport_win.cpp \
                           $$PWD/qextserialenumerator_win.cpp
 
 linux*{
-    !qesp_linux_udev:DEFINES += QESP_NO_UDEV
-    qesp_linux_udev: LIBS += -ludev
+    LIBS += -ludev
 }
 
 macx:LIBS              += -framework IOKit -framework CoreFoundation

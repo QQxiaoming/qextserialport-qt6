@@ -32,8 +32,8 @@
 #ifndef _QEXTSERIALENUMERATOR_H_
 #define _QEXTSERIALENUMERATOR_H_
 
-#include <QtCore/QList>
-#include <QtCore/QObject>
+#include <QList>
+#include <QObject>
 #include "qextserialport_global.h"
 
 struct QextPortInfo {
@@ -43,10 +43,11 @@ struct QextPortInfo {
     QString enumName;   ///< Enumerator name.
     int vendorID;       ///< Vendor ID.
     int productID;      ///< Product ID
+    int revision;       ///< Device revision
 };
 
 class QextSerialEnumeratorPrivate;
-class QEXTSERIALPORT_EXPORT QextSerialEnumerator : public QObject
+class QextSerialEnumerator : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QextSerialEnumerator)
@@ -63,7 +64,7 @@ Q_SIGNALS:
 
 private:
     Q_DISABLE_COPY(QextSerialEnumerator)
-#if defined(Q_OS_LINUX) && !defined(QESP_NO_UDEV)
+#if defined(Q_OS_LINUX)
     Q_PRIVATE_SLOT(d_func(), void _q_deviceEvent())
 #endif
     QextSerialEnumeratorPrivate *d_ptr;

@@ -22,6 +22,7 @@ int main()
         qDebug() << "enumerator name:" << info.enumName;
         qDebug() << "vendor ID:"       << info.vendorID;
         qDebug() << "product ID:"      << info.productID;
+        qDebug() << "revision:"      << info.revision;
 
         qDebug() << "===================================";
     }

@@ -42,8 +42,7 @@
 //
 // We mean it.
 //
-
-#include "qextserialenumerator.h"
+#include <QCoreApplication>
 
 #ifdef  Q_CC_MINGW
 // needed for mingw to pull in appropriate dbt business...
@@ -56,22 +55,25 @@
 #  ifndef _WIN32_WINNT
 #    define _WIN32_WINNT WINVER
 #  endif
+#include <windows.h>
 #endif
 
 #ifdef Q_OS_WIN
-#  include <QtCore/qt_windows.h>
+#  include <qt_windows.h>
 #endif /*Q_OS_WIN*/
 
 #ifdef Q_OS_MAC
 #  include <IOKit/usb/IOUSBLib.h>
 #endif /*Q_OS_MAC*/
 
-#if defined(Q_OS_LINUX) && !defined(QESP_NO_UDEV)
+#if defined(Q_OS_LINUX)
 #  include <QSocketNotifier>
 extern "C" {
 #  include <libudev.h>
 }
 #endif
+
+#include "qextserialenumerator.h"
 
 class QextSerialRegistrationWidget;
 class QextSerialEnumeratorPrivate
@@ -107,7 +109,7 @@ public:
     IONotificationPortRef notificationPortRef;
 #endif // Q_OS_MAC
 
-#if defined(Q_OS_LINUX) && !defined(QESP_NO_UDEV)
+#if defined(Q_OS_LINUX)
     QSocketNotifier *notifier;
     int notifierFd;
     struct udev *udev;

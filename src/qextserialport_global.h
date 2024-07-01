@@ -32,15 +32,7 @@
 #ifndef QEXTSERIALPORT_GLOBAL_H
 #define QEXTSERIALPORT_GLOBAL_H
 
-#include <QtCore/QtGlobal>
-
-#ifdef QEXTSERIALPORT_BUILD_SHARED
-#  define QEXTSERIALPORT_EXPORT Q_DECL_EXPORT
-#elif defined(QEXTSERIALPORT_USING_SHARED)
-#  define QEXTSERIALPORT_EXPORT Q_DECL_IMPORT
-#else
-#  define QEXTSERIALPORT_EXPORT
-#endif
+#include <QtGlobal>
 
 // ### for compatible with old version. should be removed in QESP 2.0
 #ifdef _TTY_NOWARN_
